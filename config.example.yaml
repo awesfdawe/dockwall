@@ -1,0 +1,13 @@
+debounce: 500ms
+poll_interval: 1m
+
+policies:
+  - network: proxy
+    rules:
+      - from: reverse-proxy
+        to: "*"
+
+  - network: bypass
+    rules:
+      - from: "*"
+        to: xray-core
