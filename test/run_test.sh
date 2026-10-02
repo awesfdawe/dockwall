@@ -1,5 +1,10 @@
 set -euo pipefail
 
+if [ "$(id -u)" -ne 0 ]; then
+    echo "must be run as root: sudo $0"
+    exit 1
+fi
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${DIR}/.." && pwd)"
 
@@ -14,7 +19,7 @@ cleanup
 docker compose -f "${DIR}/docker-compose.test.yml" up -d
 
 go build -trimpath -ldflags="-s -w" -o "${ROOT_DIR}/bin/dockwall" "${ROOT_DIR}/cmd/dockwall"
-sudo "${ROOT_DIR}/bin/dockwall" -config "${DIR}/test_config.yaml" &
+"${ROOT_DIR}/bin/dockwall" -config "${DIR}/test_config.yaml" &
 sleep 2
 
 docker exec reverse-proxy nc -z -w 2 service-a 8080
@@ -25,7 +30,7 @@ if docker exec service-a nc -z -w 2 service-b 8080 2>/dev/null; then
     exit 1
 fi
 
-if docker exec service-a nc -z -w 2 reverse-proxy 80 2>/dev/null; then
+if docker exec service-a nc -z -w 2 reverse-proxy 8080 2>/dev/null; then
     echo "FAIL: service-a could reach reverse-proxy"
     exit 1
 fi

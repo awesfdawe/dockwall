@@ -2,7 +2,7 @@ services:
   reverse-proxy:
     image: alpine:latest
     container_name: reverse-proxy
-    command: ["sleep", "infinity"]
+    command: ["sh", "-c", "while true; do echo ok | nc -l -p 8080; done"]
     networks:
       - proxy-net
 
@@ -37,7 +37,7 @@ services:
   client-b:
     image: alpine:latest
     container_name: client-b
-    command: ["sleep", "infinity"]
+    command: ["sh", "-c", "while true; do echo ok | nc -l -p 9090; done"]
     networks:
       - bypass-net
 
