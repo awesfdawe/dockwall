@@ -1,0 +1,48 @@
+services:
+  reverse-proxy:
+    image: alpine:latest
+    container_name: reverse-proxy
+    command: ["sleep", "infinity"]
+    networks:
+      - proxy-net
+
+  service-a:
+    image: alpine:latest
+    container_name: service-a
+    command: ["sh", "-c", "while true; do echo ok | nc -l -p 8080; done"]
+    networks:
+      - proxy-net
+
+  service-b:
+    image: alpine:latest
+    container_name: service-b
+    command: ["sh", "-c", "while true; do echo ok | nc -l -p 8080; done"]
+    networks:
+      - proxy-net
+
+  xray-core:
+    image: alpine:latest
+    container_name: xray-core
+    command: ["sh", "-c", "while true; do echo ok | nc -l -p 9090; done"]
+    networks:
+      - bypass-net
+
+  client-a:
+    image: alpine:latest
+    container_name: client-a
+    command: ["sleep", "infinity"]
+    networks:
+      - bypass-net
+
+  client-b:
+    image: alpine:latest
+    container_name: client-b
+    command: ["sleep", "infinity"]
+    networks:
+      - bypass-net
+
+networks:
+  proxy-net:
+    name: dockwall-proxy-test
+  bypass-net:
+    name: dockwall-bypass-test

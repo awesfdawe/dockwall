@@ -1,0 +1,18 @@
+services:
+  dockwall:
+    build: .
+    image: dockwall:latest
+    container_name: dockwall
+    restart: unless-stopped
+    network_mode: host
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_ADMIN
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    userns_mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config.yaml:/etc/dockwall/config.yaml:ro

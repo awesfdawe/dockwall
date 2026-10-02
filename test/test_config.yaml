@@ -1,0 +1,13 @@
+debounce: 200ms
+poll_interval: 10s
+
+policies:
+  - network: dockwall-proxy-test
+    rules:
+      - from: reverse-proxy
+        to: "*"
+
+  - network: dockwall-bypass-test
+    rules:
+      - from: "*"
+        to: xray-core
